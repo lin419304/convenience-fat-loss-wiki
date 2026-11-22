@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>超商 × 減脂餐搭配小教室 🍙</title>
+  <style>
+    :root {
+      --bg: #fdf8f2;
+      --card: #ffffff;
+      --accent: #e06d33;
+      --accent-soft: #fff0e6;
+      --bubble-bg: #fff9db;
+      --bubble-border: #ffd43b;
+      --next-bg: #e7f5ff;
+      --next-text: #1864ab;
+      --text: #2f2a27;
+      --muted: #665e58;
+      --border: #eddcc9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(#f7dcc7 1.2px, transparent 1.2px);
+      background-size: 22px 22px;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .deck {
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 22px;
+      padding: 32px 36px;
+      box-shadow: 0 10px 28px rgba(224, 109, 51, 0.08);
+      min-height: 560px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .slide { display: none; }
+    .slide.active { display: block; }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 5px 14px;
+      border-radius: 999px;
+    }
+    h1 {
+      font-size: 1.9rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .subtitle {
+      font-size: 0.98rem;
+      color: var(--muted);
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 250px;
+      gap: 18px;
+      align-items: start;
+    }
+    @media (max-width: 780px) {
+      .main-layout { grid-template-columns: 1fr; }
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .box {
+      background: #fffcf8;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .box h3 {
+      font-size: 1.02rem;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .box p, .box li {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    ul { padding-left: 18px; }
+    li { margin-bottom: 5px; }
+
+    .danger-box {
+      background: #fff5f5;
+      border-color: #ffc9c9;
+    }
+    .danger-box h3 { color: #c92a2a; }
+
+    .speech-bubble {
+      position: relative;
+      background: var(--bubble-bg);
+      border: 2px dashed var(--bubble-border);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(255, 212, 59, 0.18);
+    }
+    .speech-bubble .avatar {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .speech-bubble .bubble-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #b07d00;
+      margin-bottom: 6px;
+    }
+    .speech-bubble p {
+      font-size: 0.9rem;
+      color: #4a4238;
+      line-height: 1.6;
+    }
+    .mini-note {
+      margin-top: 10px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.83rem;
+      color: #6b5e4c;
+      border: 1px solid #ffe8a1;
+    }
+
+    .next-preview {
+      margin-top: 20px;
+      background: var(--next-bg);
+      color: var(--next-text);
+      border: 1.5px solid #a5d8ff;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.94rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .controls {
+      max-width: 960px;
+      width: 100%;
+      margin: 14px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+    button:disabled { background: #d9c7b8; cursor: not-allowed; }
+    .counter { font-size: 0.95rem; color: var(--muted); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="deck">
+    <!-- ==================== 第 1 頁：挑選原則跟地雷 ==================== -->
+    <section class="slide active">
+      <div>
+        <div class="top-bar">
+          <span class="badge">🍙 超商 × 減脂餐搭配小教室｜第 1 / 4 頁</span>
+          <span style="font-size:0.9rem; color:#887a6e;">不知道怎麼選？照著看就對了 ✨</span>
+        </div>
+        <h1>Step 1：先記住挑選原則 & 避開地雷區 🚫</h1>
+        <p class="subtitle">減脂不用餓肚子，也不用完全不吃澱粉！只要掌握「挑對 3 樣、避開 4 樣」，超商也能吃得很開心～</p>
+
+        <div class="main-layout">
+          <div class="grid-2">
+            <div class="box">
+              <h3>✅ 挑食 3 原則</h3>
+              <ul>
+                <li><strong>🥩 蛋白質優先</strong>：每餐至少 1 份，幫助飽足又維持肌肉（雞胸、蛋、無加糖豆漿）。</li>
+                <li><strong>🍙 適量好澱粉</strong>：依活動量選份量，飯糰、地瓜、玉米都很棒。</li>
+                <li><strong>🥬 蔬菜＋無糖飲</strong>：每餐搭 1 份沙拉或蔬菜湯，飲料選無糖茶或黑咖啡。</li>
+              </ul>
+            </div>
+
+            <div class="box danger-box">
+              <h3>❌ 高熱量地雷區（少油・少糖・少加工）</h3>
+              <ul>
+                <li>🍗 <strong>炸物</strong>（油量直接爆表！）</li>
+                <li>🧋 <strong>含糖飲料</strong>（喝一杯等於多吃半碗飯）</li>
+                <li>🥐 <strong>高糖麵包／甜點</strong>（糖跟油都藏在裡面）</li>
+                <li>🍜 <strong>泡麵</strong>（高油高鈉、營養又少）</li>
+              </ul>
+            </div>
+          </div>
+
+          <aside class="speech-bubble">
+            <span class="avatar">🐰💬</span>
+            <div class="bubble-title">小幫手碎碎念：</div>
+            <p>減肥不可以吃炸的喔 ❌ <strong>絕對、絕對不可以！</strong> 炸雞排跟珍珠奶茶先跟它們說掰掰～偶爾解饞可以，但千萬別天天拿來當正餐呀！</p>
+            <div class="mini-note">💡 小祕訣：進超商先看營養標示，吃到七分飽最剛好！</div>
+          </aside>
+        </div>
+      </div>
+
+      <div class="next-preview">
+        <span>👇 下一頁預告：接下來告訴你，超商架上各個種類到底有哪些好東西可以選！</span>
+        <span>第 2 頁 →</span>
+      </div>
+    </section>
+
+    <!-- ==================== 第 2 頁：各個種類有什麼可以選 ==================== -->
+    <section class="slide">
+      <div>
+        <div class="top-bar">
+          <span class="badge">🍱 超商食物分類圖鑑｜第 2 / 4 頁</span>
+          <span style="font-size:0.9rem; color:#887a6e;">認識好食材，逛超商不再發呆 👀</span>
+        </div>
+        <h1>Step 2：超商各個種類有什麼可以選？</h1>
+        <p class="subtitle">把 7-11 跟全家常見的減脂好朋友分成四大類，想吃什麼自由挑！</p>
+
+        <div class="main-layout">
+          <div class="grid-2">
+            <div class="box">
+              <h3>🥩 優質蛋白質類</h3>
+              <ul>
+                <li>舒肥雞胸肉（原味／鹽麴／咖哩）</li>
+                <li>溫泉蛋、茶葉蛋、溏心蛋</li>
+                <li>7-PREMIUM 水煮鮪魚、毛豆</li>
+                <li>無加糖豆漿／黑豆奶、無加糖希臘優格</li>
+              </ul>
+            </div>
+
+            <div class="box">
+              <h3>🍙 優質澱粉主食類</h3>
+              <ul>
+                <li>三角御飯糰（鮭魚、糙米／五穀米、西京燒鱈魚燕麥）</li>
+                <li>烤地瓜／黃心地瓜</li>
+                <li>即食玉米、全麥麵包、蕎麥涼麵</li>
+              </ul>
+            </div>
+
+            <div class="box">
+              <h3>🥬 豐富蔬菜與湯品類</h3>
+              <ul>
+                <li>生菜沙拉／海藻野菜沙拉／十品日田園沙拉（醬包減半更讚！）</li>
+                <li>小滷青蔬、海帶絲、涼拌花椰菜</li>
+                <li>蔬菜湯、鮭魚豆腐味噌湯、綠竹筍排骨湯</li>
+              </ul>
+            </div>
+
+            <div class="box">
+              <h3>🍓 100 大卡嘴饞小點心</h3>
+              <ul>
+                <li>日式／海鮮茶碗蒸（約 79～83 kcal）</li>
+                <li>照燒雞腿肉串（92 kcal）、小滷青蔬（90 kcal）</li>
+                <li>鹽味毛豆（96 kcal）、無加糖優酪＋小番茄</li>
+              </ul>
+            </div>
+          </div>
+
+          <aside class="speech-bubble">
+            <span class="avatar">🐻💬</span>
+            <div class="bubble-title">可愛小提醒：</div>
+            <p>哇～原來超商有這麼多選擇！🎉 沙拉醬包記得<strong>不要全倒</strong>，優格也要認明<strong>「無加糖」</strong>，才不會默默把隱藏熱量吃下去喔！</p>
+            <div class="mini-note">📝 註：數值僅供參考，實際熱量以包裝標示為準～</div>
+          </aside>
+        </div>
+      </div>
+
+      <div class="next-preview">
+        <span>👇 下一頁預告：認識完種類還不知道怎麼配？我也幫你搭配好早、午、晚餐啦！</span>
+        <span>第 3 頁 →</span>
+      </div>
+    </section>
+
+    <!-- ==================== 第 3 頁：早、午、晚餐多種搭配自己挑 ==================== -->
+    <section class="slide">
+      <div>
+        <div class="top-bar">
+          <span class="badge">🥪 三餐自由選搭配｜第 3 / 4 頁</span>
+          <span style="font-size:0.9rem; color:#887a6e;">挑一個你今天最想吃的組合吧 😋</span>
+        </div>
+        <h1>Step 3：早、午、晚餐多種搭配任你挑！</h1>
+        <p class="subtitle">每餐都幫你準備好 3 種不同口味的組合，照著拿就能吃飽又控熱量～</p>
+
+        <div class="main-layout">
+          <div class="grid-3">
+            <div class="box">
+              <h3>☀️ 早餐搭配（3 選 1）</h3>
+              <ul>
+                <li><strong>經典飽足組（約 409 kcal）</strong>：醬燒烤雞三明治 ＋ 溫泉蛋（蛋白質 33.4g）</li>
+                <li><strong>清爽輕盈組（約 307 kcal）</strong>：蔥鹽雞肉麵沙拉 ＋ 無加糖厚濃黑豆奶（蛋白質 32.2g）</li>
+                <li><strong>高纖活力組（約 380 kcal）</strong>：鮭魚飯糰 ＋ 無加糖豆漿（蛋白質 26.3g）</li>
+              </ul>
+            </div>
+
+            <div class="box">
+              <h3>🌤️ 午餐搭配（3 選 1）</h3>
+              <ul>
+                <li><strong>和風蕎麥組（457 kcal）</strong>：21Plus咖哩雞胸肉 ＋ 北海道蕎麥風味沾麵（蛋白質 35g）</li>
+                <li><strong>烤魚鮮蔬組（512 kcal）</strong>：豆酥烤魚鮮蔬餐盒 ＋ 茶葉蛋 1 顆（蛋白質 31g）</li>
+                <li><strong>米漢堡時蔬組（492 kcal）</strong>：青花椒雞腿排米漢堡 ＋ 蔥鹽雞腿溫時蔬（蛋白質 30g）</li>
+              </ul>
+            </div>
+
+            <div class="box">
+              <h3>🌙 晚餐搭配（3 選 1）</h3>
+              <ul>
+                <li><strong>輕盈飽足組（約 380 kcal）</strong>：鮭魚飯糰 ＋ 雞肉沙拉 ＋ 無加糖豆漿</li>
+                <li><strong>高纖蔬食組（約 250 kcal）</strong>：海藻野菜沙拉 ＋ 日式溫泉蛋 ＋ 蔬菜湯</li>
+                <li><strong>經典滿足組（約 320 kcal）</strong>：義式香草雞腿排飯糰/三明治 ＋ 無加糖優酪 ＋ 小番茄</li>
+              </ul>
+            </div>
+          </div>
+
+          <aside class="speech-bubble">
+            <span class="avatar">🐥💬</span>
+            <div class="bubble-title">選擇障礙看這邊：</div>
+            <p>今天想吃麵、想吃飯糰、還是想喝熱湯？隨便挑一格自己最喜歡的去結帳就對了！🛒 午餐想吃餐盒也沒問題喔～</p>
+            <div class="mini-note">🥤 飲料口渴的話，配無糖綠茶或美式咖啡最清爽！</div>
+          </aside>
+        </div>
+      </div>
+
+      <div class="next-preview">
+        <span>👇 下一頁預告：連想都懶得想？最後一頁直接幫你配好「一整天懶人包」照著買！</span>
+        <span>第 4 頁 →</span>
+      </div>
+    </section>
+
+    <!-- ==================== 第 4 頁：一整天懶人配 ==================== -->
+    <section class="slide">
+      <div>
+        <div class="top-bar">
+          <span class="badge">🛍️ 一整天懶人包｜第 4 / 4 頁</span>
+          <span style="font-size:0.9rem; color:#887a6e;">同事救星！直接照清單去拿商品 🏃‍♂️</span>
+        </div>
+        <h1>Step 4：懶人配！一整天都幫你配好啦 🎉</h1>
+        <p class="subtitle">不想動腦算熱量？直接選一套「一日懶人包」，照著清單走進超商拿就對了！</p>
+
+        <div class="main-layout">
+          <div class="grid-3">
+            <div class="box">
+              <h3>🌿 懶人包 A：輕鬆低負擔一日</h3>
+              <ul>
+                <li><strong>早（約 409 kcal）</strong>：醬燒烤雞三明治 ＋ 溫泉蛋</li>
+                <li><strong>午（約 307 kcal）</strong>：蔥鹽雞肉麵沙拉 ＋ 無加糖厚濃黑豆奶</li>
+                <li><strong>晚（約 380 kcal）</strong>：鮭魚飯糰 ＋ 無加糖豆漿</li>
+                <li><strong>點心（100 kcal 內）</strong>：無加糖優酪 ＋ 小番茄</li>
+              </ul>
+            </div>
+
+            <div class="box">
+              <h3>💪 懶人包 B：1450 大卡高蛋白（全家＋7-11）</h3>
+              <ul>
+                <li><strong>早（418 kcal）</strong>：義美無加糖厚濃豆奶 ＋ 西京燒鱈魚燕麥飯糰</li>
+                <li><strong>午（457 kcal）</strong>：21Plus咖哩雞胸肉 ＋ 北海道蕎麥風味沾麵</li>
+                <li><strong>晚（570 kcal）</strong>：AB無加糖優酪乳 ＋ 美式雞丁餐盒</li>
+                <li><strong>整天總計</strong>：1445 kcal（蛋白質 95g）</li>
+              </ul>
+            </div>
+
+            <div class="box">
+              <h3>🍱 懶人包 C：1450 大卡飽足三餐</h3>
+              <ul>
+                <li><strong>早（368 kcal）</strong>：椒香溫泉蛋 ＋ 厚豆腐蛋白蕈菇豬肉堡</li>
+                <li><strong>午（492 kcal）</strong>：青花椒雞腿排米漢堡 ＋ 蔥鹽雞腿溫時蔬</li>
+                <li><strong>晚（597 kcal）</strong>：照燒豬排纖食餐盒 ＋ 義美無加糖厚濃豆奶</li>
+                <li><strong>整天總計</strong>：1457 kcal（蛋白質 96g）</li>
+              </ul>
+            </div>
+          </div>
+
+          <aside class="speech-bubble">
+            <span class="avatar">🙄💬</span>
+            <div class="bubble-title">小幫手眼神死：</div>
+            <p>連自己搭配都懶得做嗎 🙄 勉強幫你搭好一整天啦～照著清單拿就對了，記得看包裝標示跟多喝水喔 💧</p>
+            <div class="mini-note">🌟 偶爾嘴饞吃點零食沒關係，整體飲食均衡最重要！</div>
+          </aside>
+        </div>
+      </div>
+
+      <div class="next-preview">
+        <span>都挑好了嗎？要堅持下去才會有結果喔！我們一起加油 💪✨</span>
+        <span>完成 4 / 4 頁 ✨</span>
+      </div>
+    </section>
+  </div>
+
+  <div class="controls">
+    <button id="prevBtn" onclick="move(-1)">← 上一頁</button>
+    <span class="counter" id="counter">第 1 / 4 頁</span>
+    <button id="nextBtn" onclick="move(1)">下一頁 →</button>
+  </div>
+
+  <script>
+    let idx = 0;
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const counter = document.getElementById('counter');
+
+    function update() {
+      slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+      prevBtn.disabled = idx === 0;
+      nextBtn.disabled = idx === slides.length - 1;
+      counter.textContent = `第 ${idx + 1} / ${slides.length} 頁`;
+    }
+
+    function move(step) {
+      idx = Math.max(0, Math.min(slides.length - 1, idx + step));
+      update();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') move(1);
+      if (e.key === 'ArrowLeft') move(-1);
+    });
+
+    update();
+  </script>
+</body>
+</html>
